@@ -4,11 +4,11 @@ require("dotenv").config();
 const cors = require("cors");
 const helmet = require("helmet");
 const app = express();
-const PORT = 8200;
+const PORT = process.env.PORT || 8200;
 const MOVIEDEX = require("./moviedex.json");
-
+const morganSetting = process.env.NODE_ENV === "production" ? "tiny" : "dev";
 // middleware
-app.use(morgan("dev"));
+app.use(morgan(morganSetting));
 app.use(cors());
 app.use(helmet());
 app.use(validateBearerToken);
@@ -55,6 +55,16 @@ function validateBearerToken(req, res, next) {
   }
   next();
 }
+
+app.use((error, req, res, next) => {
+  let response;
+  if (process.env.NODE_ENV === "production") {
+    response = { error: { message: "server error" } };
+  } else {
+    response = { error };
+  }
+  res.status(500).json(response);
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening at http://localhost:${PORT}`);
