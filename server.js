@@ -9,8 +9,8 @@ const MOVIEDEX = require("./moviedex.json");
 const morganSetting = process.env.NODE_ENV === "production" ? "tiny" : "dev";
 // middleware
 app.use(morgan(morganSetting));
-app.use(cors());
 app.use(helmet());
+app.use(cors());
 app.use(validateBearerToken);
 
 app.get("/movie", handleGetMovie);
